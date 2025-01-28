@@ -3,6 +3,7 @@ import './assets/main.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
+// import Ripple from 'primevue/ripple';
 import Aura from '@primevue/themes/aura';
 
 import App from './App.vue'
@@ -14,8 +15,8 @@ app.use(PrimeVue, {
         preset: Aura,
         options: {
             prefix: 'p',
-            darkModeSelector: 'light',
-        }
+            darkModeSelector: 'light    ',
+        },
     }
 });
 
