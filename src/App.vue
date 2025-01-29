@@ -1,24 +1,53 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
-import Button from "primevue/button";
+import { Button } from 'primevue';
+import Canvas from './components/Canvas.vue';
+import 'primeicons/primeicons.css';
+import Dock from 'primevue/dock';
 
-function show_point(point) {
-  console.log(point);
-}
 
+var items = [
+  { label: 'Add polygon', icon: 'https://www.primefaces.org/primevue/showcase/assets/showcase/images/dock/plus.svg' },
+  { label: 'Remove polygon', icon: 'https://www.primefaces.org/primevue/showcase/assets/showcase/images/dock/minus.svg' },
+  { label: 'Clear all', icon: 'https://www.primefaces.org/primevue/showcase/assets/showcase/images/dock/close.svg' }
+];
+
+var position = 'bottom';
 </script>
 
 <template>
-  <h1>
-    Minkowski Sum
-  </h1>
+  <header style="display: flex; align-items: center; justify-content: space-between;">
+    <Button icon="pi pi-home" aria-label="Save" />
+    <h1>
+      Minkowski Sum
+    </h1>
+    <Button icon="pi pi-save" aria-label="Save" />
+  </header>
 
-  <canvas
-  @click="show_point([$event.offsetX, $event.offsetY])"
-  style="border:1px solid #000000;"
-  ></canvas>
-  <!-- <RouterView /> -->
+  <Canvas/>
+
+  <Dock :model="items" :position="position">
+    <template #itemicon="{ item }">
+        <Button icon="pi pi-plus" aria-label="Save" />
+    </template>
+</Dock>
+
+  <!-- <Button label="Add polygon"></Button> -->
 </template>
 
 <style scoped>
+
+h1 {
+  color: black;
+}
+
+header {
+  /* background-color: rgba(255, 255, 255, 0.5); */
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 10px;
+  text-align: center;
+  border-radius: 15px;
+}
+
 </style>

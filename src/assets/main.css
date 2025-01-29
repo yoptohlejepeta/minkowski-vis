@@ -2,20 +2,6 @@ body {
     font-family: 'Maven Pro', sans-serif;
     }
 
-
-
-canvas {
-    border-radius: 60px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-    border: 1px solid #ccc;
-    background-color: #fff;
-    width: 80%;
-    height: 80%;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-}
-
 h1 {
     font-size: 3em;
     text-align: center;
