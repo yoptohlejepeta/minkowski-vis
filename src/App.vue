@@ -123,28 +123,34 @@ const minkowskiSum = (poly1, poly2) => {
 
 const convexHull = (points) => {
   // Implement Graham scan algorithm for convex hull
-  // This is a simplified version and may not work for all cases
-  points.sort((a, b) => a.x - b.x || a.y - b.y);
-  const lower = [];
-  for (let i = 0; i < points.length; i++) {
-    while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], points[i]) <= 0) {
-      lower.pop();
+  if (points.length <= 3) return points;
+
+  // Find the point with the lowest y-coordinate (and leftmost if tied)
+  const pivot = points.reduce((a, b) => (a.y < b.y || (a.y === b.y && a.x < b.x)) ? a : b);
+
+  // Sort points by polar angle with respect to pivot
+  const sortedPoints = points
+    .filter(p => p !== pivot)
+    .sort((a, b) => {
+      const angleA = Math.atan2(a.y - pivot.y, a.x - pivot.x);
+      const angleB = Math.atan2(b.y - pivot.y, b.x - pivot.x);
+      return angleA - angleB;
+    });
+
+  const stack = [pivot, sortedPoints[0], sortedPoints[1]];
+
+  for (let i = 2; i < sortedPoints.length; i++) {
+    while (stack.length > 1 && !isCounterClockwise(stack[stack.length - 2], stack[stack.length - 1], sortedPoints[i])) {
+      stack.pop();
     }
-    lower.push(points[i]);
+    stack.push(sortedPoints[i]);
   }
-  const upper = [];
-  for (let i = points.length - 1; i >= 0; i--) {
-    while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], points[i]) <= 0) {
-      upper.pop();
-    }
-    upper.push(points[i]);
-  }
-  upper.pop();
-  lower.pop();
-  return lower.concat(upper);
+
+  return stack;
 };
 
-const cross = (o, a, b) => {
-  return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+const isCounterClockwise = (p1, p2, p3) => {
+  return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) > 0;
 };
 </script>
+

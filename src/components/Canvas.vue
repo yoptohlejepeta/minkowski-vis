@@ -45,16 +45,23 @@ watch([() => props.polygons, () => props.activePolygonIndex], drawPolygons, { de
 function drawPolygons() {
   if (!ctx.value) return;
 
-  ctx.value.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height);
+  const canvas = canvasRef.value;
+  ctx.value.clearRect(0, 0, canvas.width, canvas.height);
 
   // Draw axes
   ctx.value.strokeStyle = '#ccc';
   ctx.value.beginPath();
-  ctx.value.moveTo(0, canvasRef.value.height / 2);
-  ctx.value.lineTo(canvasRef.value.width, canvasRef.value.height / 2);
-  ctx.value.moveTo(canvasRef.value.width / 2, 0);
-  ctx.value.lineTo(canvasRef.value.width / 2, canvasRef.value.height);
+  ctx.value.moveTo(0, canvas.height / 2);
+  ctx.value.lineTo(canvas.width, canvas.height / 2);
+  ctx.value.moveTo(canvas.width / 2, 0);
+  ctx.value.lineTo(canvas.width / 2, canvas.height);
   ctx.value.stroke();
+
+  // Add text for axes
+  ctx.value.fillStyle = '#666';
+  ctx.value.font = '12px Arial';
+  ctx.value.fillText('Y', canvas.width / 2 + 5, 15);
+  ctx.value.fillText('X', canvas.width - 15, canvas.height / 2 - 5);
 
   props.polygons.forEach((polygon, index) => {
     ctx.value.strokeStyle = polygon.color;
@@ -64,10 +71,12 @@ function drawPolygons() {
     if (polygon.points.length > 0) {
       ctx.value.beginPath();
       polygon.points.forEach((point, i) => {
+        const canvasX = canvas.width / 2 + point.x;
+        const canvasY = canvas.height / 2 - point.y;
         if (i === 0) {
-          ctx.value.moveTo(point.x, point.y);
+          ctx.value.moveTo(canvasX, canvasY);
         } else {
-          ctx.value.lineTo(point.x, point.y);
+          ctx.value.lineTo(canvasX, canvasY);
         }
       });
       if (polygon.points.length > 2) {
@@ -78,19 +87,23 @@ function drawPolygons() {
 
       // Draw points
       polygon.points.forEach((point) => {
+        const canvasX = canvas.width / 2 + point.x;
+        const canvasY = canvas.height / 2 - point.y;
         ctx.value.fillStyle = polygon.color;
         ctx.value.beginPath();
-        ctx.value.arc(point.x, point.y, 4, 0, Math.PI * 2);
+        ctx.value.arc(canvasX, canvasY, 4, 0, Math.PI * 2);
         ctx.value.fill();
       });
 
       // Draw center point for moving the polygon
       const center = getPolygonCenter(polygon.points);
+      const canvasCenterX = canvas.width / 2 + center.x;
+      const canvasCenterY = canvas.height / 2 - center.y;
       ctx.value.fillStyle = 'white';
       ctx.value.strokeStyle = polygon.color;
       ctx.value.lineWidth = 2;
       ctx.value.beginPath();
-      ctx.value.arc(center.x, center.y, 8, 0, Math.PI * 2);
+      ctx.value.arc(canvasCenterX, canvasCenterY, 8, 0, Math.PI * 2);
       ctx.value.fill();
       ctx.value.stroke();
     }
@@ -106,8 +119,8 @@ function getPolygonCenter(points) {
 function handleCanvasClick(event) {
   if (!isDragging.value) {
     const rect = canvasRef.value.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = event.clientX - rect.left - canvasRef.value.width / 2;
+    const y = canvasRef.value.height / 2 - (event.clientY - rect.top);
     emit('add-point', x, y);
   }
 }
@@ -115,8 +128,8 @@ function handleCanvasClick(event) {
 function handleMouseMove(event) {
   if (isDragging.value && draggedItem.value) {
     const rect = canvasRef.value.getBoundingClientRect();
-    const x = event.clientX - rect.left;
-    const y = event.clientY - rect.top;
+    const x = event.clientX - rect.left - canvasRef.value.width / 2;
+    const y = canvasRef.value.height / 2 - (event.clientY - rect.top);
     
     if (draggedItem.value.type === 'point') {
       emit('update-point', draggedItem.value.polygonIndex, draggedItem.value.pointIndex, x, y);
@@ -132,8 +145,8 @@ function handleMouseMove(event) {
 
 function handleMouseDown(event) {
   const rect = canvasRef.value.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
+  const x = event.clientX - rect.left - canvasRef.value.width / 2;
+  const y = canvasRef.value.height / 2 - (event.clientY - rect.top);
   
   for (let i = 0; i < props.polygons.length; i++) {
     const polygon = props.polygons[i];
@@ -163,3 +176,4 @@ function handleMouseUp() {
   draggedItem.value = null;
 }
 </script>
+
