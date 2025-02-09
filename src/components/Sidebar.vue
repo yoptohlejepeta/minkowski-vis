@@ -33,6 +33,7 @@
   const activePolygonIndex = ref(0);
   
   const selectPolygon = (index) => {
+    console.log('selectPolygon', index);
     activePolygonIndex.value = index;
     emit('select-polygon', index);
   };

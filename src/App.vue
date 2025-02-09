@@ -6,9 +6,10 @@
       <ul class="space-y-2">
         <li v-for="(polygon, index) in polygons" :key="polygon.id" 
             class="p-2 rounded cursor-pointer hover:bg-accent hover:text-accent-foreground"
-            :class="{ 'bg-accent text-accent-foreground': index === activePolygonIndex }">
+            :class="{ 'bg-accent text-accent-foreground': index === activePolygonIndex }"
+            @click="selectPolygon(index)">
           <div class="flex items-center justify-between">
-            <div class="flex items-center" @click="selectPolygon(index)">
+            <div class="flex items-center">
               <div class="w-4 h-4 rounded-full mr-2" :style="{ backgroundColor: polygon.color }"></div>
               <span>Polygon {{ polygon.id }}</span>
             </div>
@@ -60,6 +61,7 @@ const polygons = ref([
 const activePolygonIndex = ref(0);
 
 const selectPolygon = (index) => {
+  console.log('selectPolygon', index);
   activePolygonIndex.value = index;
 };
 
@@ -100,7 +102,8 @@ const removePolygon = (index) => {
 const calculateMinkowskiSum = () => {
   if (polygons.value.length < 2) return;
   
-  const result = minkowskiSum(polygons.value[0].points, polygons.value[1].points);
+  const nextPolygonIndex = (activePolygonIndex.value + 1) % polygons.value.length;
+  const result = minkowskiSum(polygons.value[activePolygonIndex.value].points, polygons.value[nextPolygonIndex].points);
   polygons.value.push({ 
     id: Math.max(...polygons.value.map(p => p.id), 0) + 1,
     points: result, 
