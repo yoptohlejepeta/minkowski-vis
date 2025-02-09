@@ -10,6 +10,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "lucide-vue-next": "^0.475.0",
     "vue": "^3.3.4"
   },
   "devDependencies": {
