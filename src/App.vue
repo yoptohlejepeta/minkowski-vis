@@ -34,6 +34,7 @@
           @update-point="updatePoint"
           @delete-point="deletePoint"
           @move-polygon="movePolygon"
+          @set-active-polygon="setActivePolygon"
         />
       </div>
 
@@ -63,7 +64,9 @@ const selectPolygon = (index) => {
 };
 
 const addPoint = (x, y) => {
-  polygons.value[activePolygonIndex.value].points.push({ x, y });
+  if (activePolygonIndex.value !== -1) {
+    polygons.value[activePolygonIndex.value].points.push({ x, y });
+  }
 };
 
 const updatePoint = (polygonIndex, pointIndex, x, y) => {
@@ -151,6 +154,10 @@ const convexHull = (points) => {
 
 const isCounterClockwise = (p1, p2, p3) => {
   return (p2.x - p1.x) * (p3.y - p1.y) - (p2.y - p1.y) * (p3.x - p1.x) > 0;
+};
+
+const setActivePolygon = (index) => {
+  activePolygonIndex.value = index;
 };
 </script>
 
